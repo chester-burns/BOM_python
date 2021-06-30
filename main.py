@@ -10,6 +10,7 @@ import json
 import pandas as pd
 from pretty_html_table import build_table
 import sys
+from datetime import datetime
 
 import includes.data_handling as dh
 from includes.filepath import get_filepaths
@@ -87,11 +88,17 @@ if DEV:
 
 df = pd.read_csv(fp['delta'])
 html_table_blue_light = build_table(df, 'blue_light', font_size='large', font_family='Open Sans, sans-serif', index=True)
+now = datetime.now()
+current_time = now.strftime("%H:%M:%S")
+
+title = '<h style = "font-family: Open Sans, sans-serif;font-size: 28;color: #000000;text-align: center;padding: 0px 20px 0px 0px;width: auto"><b>HOLSWORTHY WEATHER OBSERVATIONS - UPDATED AT ' + current_time + '</b></h>'
 
 # Save to html file
 with open('saves/rain_data.html', 'w') as f:
+    f.write(title)
     f.write(html_table_blue_light)
 
 if DEV == False:
     with open('C:/Users/ChesterBurns/TG/AU P 220172_JNDC - General/08 Constr/3 Program/2 EOTs/BOM Rainfall records/rain_data.html', 'w') as f:
+        f.write(title)
         f.write(html_table_blue_light)

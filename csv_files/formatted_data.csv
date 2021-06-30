@@ -1,4 +1,5 @@
 local_date_time_full,local_date_time,air_temp,wind_dir,wind_spd_kmh,gust_kmh,rain_trace
+20210630123000,30/12:30pm,18.2,NNE,7,15,0.0
 20210630120000,30/12:00pm,17.5,N,6,9,0.0
 20210630113000,30/11:30am,16.6,ENE,4,7,0.0
 20210630110000,30/11:00am,15.9,S,2,6,0.0
@@ -175,4 +176,3 @@ local_date_time_full,local_date_time,air_temp,wind_dir,wind_spd_kmh,gust_kmh,rai
 20210627140000,27/02:00pm,17.8,SW,11,15,0.0
 20210627133000,27/01:30pm,17.4,WSW,11,17,0.0
 20210627130000,27/01:00pm,16.9,WSW,13,17,0.0
-20210627123000,27/12:30pm,16.1,W,11,15,0.0
