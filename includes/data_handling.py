@@ -20,7 +20,7 @@ def save_data(data, data_file):
             
 def format_data(data, fdata_file):
     ## Defining parameters for cleaned data, will only contain time and rain data
-    cleaned_keys = ['local_date_time_full', 'local_date_time', 'rain_trace']
+    cleaned_keys = ['local_date_time_full', 'local_date_time', 'air_temp', 'wind_dir', 'wind_spd_kmh', 'gust_kmh', 'rain_trace']
     cleaned_data = []
 
     ## Fetching appropriate data based off selection in 'cleaned_keys'
@@ -36,6 +36,25 @@ def format_data(data, fdata_file):
         writer.writeheader()
         for d in cleaned_data:
             writer.writerow(d)
+
+    return cleaned_keys
+
+def create_historical(fdata_file, hist_file, keys):
+    ## Creating a new historical data file
+
+    with open(fdata_file, 'r') as fd:
+        with open(hist_file, 'w', newline='') as hd:
+            data_reader = list(csv.reader(fd))
+            hist_writer = csv.writer(hd)
+
+            hist_writer.writerow(keys)
+
+            initial_data = reversed(data_reader[1:])
+            for d in initial_data:
+                hist_writer.writerow(d)
+
+
+
 
 
 def update_historical(fdata_file, hist_file):
@@ -103,8 +122,19 @@ def delta_calc(fhist_file, deltas_file, pos_only):
         delta_list = []
         for i in range(len(reader[1:-1])):
 
-            delta = float(reader[i+1][2]) - float(reader[i+2][2])
-            delta_row = [reader[i+1][0][6:8] + "/" + reader[i+1][0][4:6] + "/" + reader[i+1][0][0:4], reader[i+1][1][-7:], reader[i+1][2], str(round(delta,2))]
+            curr_data = date = reader[i+1]
+
+
+            date = curr_data[0][6:8] + "/" + curr_data[0][4:6] + "/" + curr_data[0][0:4]
+            time = curr_data[1][-7:]
+            temp = curr_data[2]
+            wind_direction = curr_data[3]
+            wind = float(curr_data[4])/3.6
+            gust = float(curr_data[5])/3.6
+            rain = curr_data[6]
+
+            delta = float(rain) - float(reader[i+2][6])
+            delta_row = [date, time, temp, wind_direction, str(round(wind,2)), str(round(gust,2)), rain, str(round(delta,2))]
             
             if delta <= 0:
                 delta_row.append('')
@@ -116,12 +146,12 @@ def delta_calc(fhist_file, deltas_file, pos_only):
             else:
                 delta_list.append(delta_row)
             
-        delta_list.append([reader[-1][0][6:8] + "/" + reader[-1][0][4:6] + "/" + reader[-1][0][0:4], reader[-1][1][-7:], reader[-1][2], str(0.0)])
+        #delta_list.append([reader[-1][0][6:8] + "/" + reader[-1][0][4:6] + "/" + reader[-1][0][0:4], reader[-1][1][-7:], reader[-1][2], str(0.0)])
 
 
     with open(deltas_file, 'w', newline='') as df:
         writer = csv.writer(df, delimiter=',')
-        headings = ['Date', 'Time', 'Rain since 9am (mm)', 'Rain since last check (mm)', ' ']
+        headings = ['Date', 'Time', 'Air Temp (*C)', 'Wind Direction', 'Wind Speed (m/s)', 'Gust Speed (m/s)', 'Rain since 9am (mm)', 'Rain since last check (mm)', ' ']
         writer.writerow(headings)
         for x in delta_list:
             writer.writerow(x)

@@ -10,6 +10,7 @@ def get_filepaths(data_req):
     req_path = "all_requests/data_"
     full_requests_file_path = os.path.join(script_dir, req_path)
     time = data_req.json()['observations']['data'][0]['local_date_time_full']
+    #time = 'TEST'
     paths['req'] = (full_requests_file_path+time+".txt")
 
     data_fpath = 'csv_files/data.csv'
