@@ -15,6 +15,7 @@ import includes.data_handling as dh
 from includes.filepath import get_filepaths
 from includes.popup import popupmsg
 
+DEV = False
 CREATE = False
 args = sys.argv
 
@@ -27,6 +28,10 @@ if len(args) > 1:
         
         if confirm == 'y':
             CREATE = True
+    
+    elif args[1] == '-d':
+        print("\n**DEVELOPER MODE**\n-TG Output Disabled\n")
+        DEV = True
         
 
 ## Gets data from BOM, 
@@ -37,11 +42,16 @@ data = data_req.json()["observations"]["data"]
 
 #data_req = open('all_requests/data_20210628130000.txt',)
 #data = json.load(data_req)['observations']['data']
-
+if DEV: print("Data request code:", data_req.status_code)
 
 # Define filenames
 fp = get_filepaths(data_req)
 
+if DEV:
+    print("\nFilepaths: ")
+    for i in range(len(fp)):
+        print("   ", str(fp[list(fp.keys())[i]]))
+    print('\n')
 
 ## Store raw data response in historical requests folder 'all_requests'
 with open(fp['req'], 'w') as save:
@@ -63,6 +73,15 @@ if new_data == 0:
 else:
     message = (str(new_data) + " datapoint(s) successfully added")
 
+
+
+if DEV:
+    if new_data == 0:
+        print("Files are up to date")
+    else:
+        print(str(new_data) + " datapoint(s) successfully added")
+
+
 #popupmsg(message)
 
 
@@ -73,5 +92,6 @@ html_table_blue_light = build_table(df, 'blue_light', font_size='large', font_fa
 with open('saves/rain_data.html', 'w') as f:
     f.write(html_table_blue_light)
 
-with open('C:/Users/ChesterBurns/TG/AU P 220172_JNDC - General/08 Constr/3 Program/2 EOTs/BOM Rainfall records/rain_data.html', 'w') as f:
-    f.write(html_table_blue_light)
+if DEV == False:
+    with open('C:/Users/ChesterBurns/TG/AU P 220172_JNDC - General/08 Constr/3 Program/2 EOTs/BOM Rainfall records/rain_data.html', 'w') as f:
+        f.write(html_table_blue_light)

@@ -134,6 +134,10 @@ def delta_calc(fhist_file, deltas_file, pos_only):
             rain = curr_data[6]
 
             delta = float(rain) - float(reader[i+2][6])
+            if delta < 0:
+                delta = 0
+
+
             delta_row = [date, time, temp, wind_direction, str(round(wind,2)), str(round(gust,2)), rain, str(round(delta,2))]
             
             if delta <= 0:
