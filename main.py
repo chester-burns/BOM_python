@@ -99,6 +99,6 @@ with open('saves/rain_data.html', 'w') as f:
     f.write(html_table_blue_light)
 
 if DEV == False:
-    with open('C:/Users/ChesterBurns/TG/AU P 220172_JNDC - General/08 Constr/3 Program/2 EOTs/BOM Rainfall records/rain_data.html', 'w') as f:
+    with open('C:/Users/ChesterBurns/TG/AU P 220172_JNDC - General/08 Constr/3 Program/2 EOTs/BOM Rainfall records/holsworthy_historical_data.html', 'w') as f:
         f.write(title)
         f.write(html_table_blue_light)
