@@ -16,9 +16,12 @@ import includes.data_handling as dh
 from includes.filepath import get_filepaths
 from includes.popup import popupmsg
 from includes.cleaning import clean
+from includes.summarise import rain_summary
+from includes.export import export_data
 
 DEV = False
 CREATE = False
+SUMMARY = False
 args = sys.argv
 
 if len(args) > 1:
@@ -34,11 +37,25 @@ if len(args) > 1:
     elif args[1] == '-d':
         print("\n**DEVELOPER MODE**\n-TG Output Disabled\n")
         DEV = True
+
+    elif args[1] == '-s':
+        if len(args)>2:
+            SUMMARY = True
+    
+    elif args[1] == '-e':
+        if len(args)>2:
+            export_data(args[2],'csv_files/deltas.csv')
+            quit()
         
 
-## Gets data from BOM, 
+## Gets data from BOM
+link = ''
+with open('link.txt','r') as l:
+    link = l.read()
+
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36'}
-data_req = requests.get("http://www.bom.gov.au/fwo/IDN60801/IDN60801.95761.json", headers=headers)
+req_link = "http://www.bom.gov.au/fwo/" + link + ".json"
+data_req = requests.get(req_link, headers=headers)
 data_req.raise_for_status()
 data = data_req.json()["observations"]["data"]
 
@@ -48,6 +65,10 @@ if DEV: print("Data request status code:", data_req.status_code)
 
 # Define filenames
 fp = get_filepaths(data_req)
+
+
+if SUMMARY:
+    rain_summary(args[2], fp['delta'])
 
 if DEV:
     print("Data stored in:", str(fp['req'][-23:]))
@@ -90,16 +111,18 @@ html_table_blue_light = build_table(df, 'blue_light', font_size='large', font_fa
 now = datetime.now()
 current_time = now.strftime("%H:%M:%S")
 
-title = '<h style = "font-family: Open Sans, sans-serif;font-size: 28;color: #000000;text-align: center;padding: 0px 20px 0px 0px;width: auto"><b>HOLSWORTHY WEATHER OBSERVATIONS - UPDATED AT ' + current_time + '</b></h>'
+title = '<h style = "font-family: Open Sans, sans-serif;font-size: 28;color: #000000;text-align: center;padding: 0px 20px 0px 0px;width: auto"><b>' + data[0]['name'].upper() + ' WEATHER OBSERVATIONS - UPDATED AT ' + current_time + '</b></h>'
 
 # Save to html file
-with open('saves/rain_data.html', 'w') as f:
+save = 'saves/' + data[0]['name'].lower() + "_weather_data.html"
+
+with open(save, 'w') as f:
     f.write(title)
     f.write(html_table_blue_light)
     deleted = clean()
     if DEV: print("Cleaning subroutine detected (and removed)", deleted, "unnecessary raw data files\n")
 
-if DEV == False:
+'''if DEV == False:
     with open('C:/Users/ChesterBurns/TG/AU P 220172_JNDC - General/08 Constr/3 Program/2 EOTs/BOM Rainfall records/holsworthy_historical_data.html', 'w') as f:
         f.write(title)
-        f.write(html_table_blue_light)
+        f.write(html_table_blue_light)'''
