@@ -126,7 +126,7 @@ with open(save, 'w') as f:
     deleted = clean()
     if DEV: print("Cleaning subroutine detected (and removed)", deleted, "unnecessary raw data files\n")
 
-'''if DEV == False:
+if DEV == False:
     with open('C:/Users/ChesterBurns/TG/AU P 220172_JNDC - General/08 Constr/3 Program/2 EOTs/BOM Rainfall records/holsworthy_historical_data.html', 'w') as f:
         f.write(title)
-        f.write(html_table_blue_light)'''
+        f.write(html_table_blue_light)
