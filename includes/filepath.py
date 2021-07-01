@@ -7,7 +7,7 @@ def get_filepaths(data_req):
 
     paths = {}
 
-    req_path = "all_requests/data_"
+    req_path = "raw_data/data_"
     full_requests_file_path = os.path.join(script_dir, req_path)
     time = data_req.json()['observations']['data'][0]['local_date_time_full']
     #time = 'TEST'

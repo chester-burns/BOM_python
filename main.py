@@ -15,6 +15,7 @@ from datetime import datetime
 import includes.data_handling as dh
 from includes.filepath import get_filepaths
 from includes.popup import popupmsg
+from includes.cleaning import clean
 
 DEV = False
 CREATE = False
@@ -43,18 +44,16 @@ data = data_req.json()["observations"]["data"]
 
 #data_req = open('all_requests/data_20210628130000.txt',)
 #data = json.load(data_req)['observations']['data']
-if DEV: print("Data request code:", data_req.status_code)
+if DEV: print("Data request status code:", data_req.status_code)
 
 # Define filenames
 fp = get_filepaths(data_req)
 
 if DEV:
-    print("\nFilepaths: ")
-    for i in range(len(fp)):
-        print("   ", str(fp[list(fp.keys())[i]]))
-    print('\n')
+    print("Data stored in:", str(fp['req'][-23:]))
 
-## Store raw data response in historical requests folder 'all_requests'
+
+## Store raw data response in historical requests folder 'raw_data'
 with open(fp['req'], 'w') as save:
     json.dump(data_req.json(), save)
 
@@ -78,7 +77,7 @@ else:
 
 if DEV:
     if new_data == 0:
-        print("Files are up to date")
+        print("No new data")
     else:
         print(str(new_data) + " datapoint(s) successfully added")
 
@@ -97,6 +96,8 @@ title = '<h style = "font-family: Open Sans, sans-serif;font-size: 28;color: #00
 with open('saves/rain_data.html', 'w') as f:
     f.write(title)
     f.write(html_table_blue_light)
+    deleted = clean()
+    if DEV: print("Cleaning subroutine detected (and removed)", deleted, "unnecessary raw data files\n")
 
 if DEV == False:
     with open('C:/Users/ChesterBurns/TG/AU P 220172_JNDC - General/08 Constr/3 Program/2 EOTs/BOM Rainfall records/holsworthy_historical_data.html', 'w') as f:
