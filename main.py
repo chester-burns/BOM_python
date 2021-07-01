@@ -22,6 +22,7 @@ from includes.export import export_data
 DEV = False
 CREATE = False
 SUMMARY = False
+EXPORT = False
 args = sys.argv
 
 if len(args) > 1:
@@ -41,11 +42,9 @@ if len(args) > 1:
     elif args[1] == '-s':
         if len(args)>2:
             SUMMARY = True
-    
     elif args[1] == '-e':
-        if len(args)>2:
-            export_data(args[2],'csv_files/deltas.csv')
-            quit()
+            if len(args) > 2:
+                EXPORT = True
         
 
 ## Gets data from BOM
@@ -58,6 +57,11 @@ req_link = "http://www.bom.gov.au/fwo/" + link + ".json"
 data_req = requests.get(req_link, headers=headers)
 data_req.raise_for_status()
 data = data_req.json()["observations"]["data"]
+
+if EXPORT:  
+    export_data(args[2],'csv_files/deltas.csv', data[0]['name'].upper())
+    quit()      
+
 
 #data_req = open('all_requests/data_20210628130000.txt',)
 #data = json.load(data_req)['observations']['data']
@@ -114,7 +118,7 @@ current_time = now.strftime("%H:%M:%S")
 title = '<h style = "font-family: Open Sans, sans-serif;font-size: 28;color: #000000;text-align: center;padding: 0px 20px 0px 0px;width: auto"><b>' + data[0]['name'].upper() + ' WEATHER OBSERVATIONS - UPDATED AT ' + current_time + '</b></h>'
 
 # Save to html file
-save = 'saves/' + data[0]['name'].lower() + "_weather_data.html"
+save = 'saves/' + data[0]['name'].replace(' ','_').lower() + "_weather_data.html"
 
 with open(save, 'w') as f:
     f.write(title)
