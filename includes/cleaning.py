@@ -72,10 +72,6 @@ def clean():
         else:
             i += 1
 
-        
-        
-
-
         if i >= (len(fileobj)-2):
             finished = True
     

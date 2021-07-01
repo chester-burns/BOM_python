@@ -58,8 +58,11 @@ data_req = requests.get(req_link, headers=headers)
 data_req.raise_for_status()
 data = data_req.json()["observations"]["data"]
 
-if EXPORT:  
-    export_data(args[2],'csv_files/deltas.csv', data[0]['name'].upper())
+if EXPORT:
+    if len(args) == 3:
+        export_data(args[2], args[2],'csv_files/deltas.csv', data[0]['name'].upper())
+    elif len(args) == 4:
+        export_data(args[2], args[3],'csv_files/deltas.csv', data[0]['name'].upper())
     quit()      
 
 
