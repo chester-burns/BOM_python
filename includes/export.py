@@ -7,8 +7,8 @@ def export_data(date1, date2, delta_file, name):
     d1 = dt.date(int(date1[-4:]), int(date1[3:5]), int(date1[0:2]))
     d2 = dt.date(int(date2[-4:]), int(date2[3:5]), int(date2[0:2]))
 
-    numdays = (d2 - d1).days
-    print(numdays)
+    numdays = (d2 - d1) + dt.timedelta(days=1)
+    numdays = numdays.days
     date = []
     if numdays == 0:
         date.append(date1)
@@ -23,18 +23,21 @@ def export_data(date1, date2, delta_file, name):
         with open(delta_file, 'r') as df:
             reader = list(csv.reader(df))
             headings = reader[0]
-            headings[-3] = "Total Rain (mm)"
+            headings[-3] = "Rain since 12am (mm)"
             ttl_rain = 0.0
 
-            if numdays == 0:
+            if numdays == 1:
                 writer.writerow(headings[1:])
             else:
                 writer.writerow(headings)
             for row in reversed(reader):
+
                 if row[0] in date:
+                    if row[1] == "12:00am":
+                        ttl_rain = 0.0
                     ttl_rain += float(row[-2])
                     row[-3] = ttl_rain
-                    if numdays == 0:
+                    if numdays == 1:
                         writer.writerow(row[1:])
                     else:
                         writer.writerow(row)
@@ -50,6 +53,6 @@ def export_data(date1, date2, delta_file, name):
     
     with open('saves/weather_export.html', 'w') as f:
         f.write(title)
-        f.write('<p>Total rain column may be different to "rain since 9am" column in historical data as it is calculated from 12AM of the input date</p>')
+        f.write("<p>Note that the 'rain since 9am' column has been replaced by 'rain since 12am'</p>")
         f.write(html_table_blue_light)
     
